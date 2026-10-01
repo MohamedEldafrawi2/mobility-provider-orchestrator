@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Tooling and editors
+.context/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Simulator state
+*.sqlite3
+
+# Test and lint caches
+.hypothesis/
+.import_linter_cache/

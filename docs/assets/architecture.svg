@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1F8A5B"/></marker>
+</defs>
+<rect width="1600" height="1200" fill="#F7F8F7"/>
+<rect x="500" y="214" width="600" height="96" rx="16" fill="#1F8A5B" stroke="#1F8A5B" stroke-width="2"/>
+<rect x="130" y="386" width="1340" height="300" rx="16" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="162" y="484" width="301" height="170" rx="14" fill="#FFFFFF" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="487" y="484" width="301" height="170" rx="14" fill="#FFFFFF" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="812" y="484" width="301" height="170" rx="14" fill="#FFFFFF" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="1137" y="484" width="301" height="170" rx="14" fill="#FFFFFF" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="110" y="770" width="420" height="270" rx="16" fill="#FFFFFF" stroke="#C9D1CC" stroke-width="2"/>
+<rect x="146" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="346" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="590" y="770" width="420" height="270" rx="16" fill="#FFFFFF" stroke="#C9D1CC" stroke-width="2"/>
+<rect x="626" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="826" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="1070" y="770" width="420" height="270" rx="16" fill="#FFFFFF" stroke="#C9D1CC" stroke-width="2"/>
+<rect x="1106" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<rect x="1306" y="904" width="148" height="44" rx="22" fill="#E6F4EC" stroke="#A9D9BE" stroke-width="2"/>
+<line x1="800" y1="310" x2="800" y2="386" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="300" y1="926" x2="340" y2="926" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="320" y1="686" x2="320" y2="770" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="780" y1="926" x2="820" y2="926" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="800" y1="686" x2="800" y2="770" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="1260" y1="926" x2="1300" y2="926" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<line x1="1280" y1="686" x2="1280" y2="770" stroke="#1F8A5B" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="800" y="62" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">MOBILITY AS A SERVICE  ·  PROVIDER AGGREGATION</text>
+<text x="800" y="112" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">One experience. Different rules.</text>
+<text x="800" y="164" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="25" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">The orchestration layer between a MaaS app and the transport providers behind it</text>
+<text x="40" y="262" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#8A948E" text-anchor="start" dominant-baseline="middle">TRAVELLERS</text>
+<text x="40" y="530" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#8A948E" text-anchor="start" dominant-baseline="middle">PLATFORM</text>
+<text x="40" y="900" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#8A948E" text-anchor="start" dominant-baseline="middle">PROVIDERS</text>
+<text x="800" y="250" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">MaaS app</text>
+<text x="800" y="286" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="400" fill="#DFF3E7" text-anchor="middle" dominant-baseline="middle">Search  ·  Book  ·  Travel</text>
+<text x="800" y="424" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">Provider orchestration layer</text>
+<text x="800" y="456" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">one API, one model, one lifecycle, whatever each provider does</text>
+<text x="312" y="530" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="600" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">Shared model</text>
+<text x="312" y="578" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">locations, trips, offers,</text>
+<text x="312" y="606" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">bookings, money</text>
+<text x="638" y="530" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="600" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">Provider capabilities</text>
+<text x="638" y="578" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">what a provider can do,</text>
+<text x="638" y="606" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">never who it is</text>
+<text x="962" y="530" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="600" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">Search deadline</text>
+<text x="962" y="578" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">one deadline, a budget per</text>
+<text x="962" y="606" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">provider, partial results</text>
+<text x="1288" y="530" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="600" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">Booking state machine</text>
+<text x="1288" y="578" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">one lifecycle for direct,</text>
+<text x="1288" y="606" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">held and pending bookings</text>
+<text x="320" y="800" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#8A948E" text-anchor="middle" dominant-baseline="middle">BUS OPERATOR</text>
+<text x="320" y="832" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">bus-legacy</text>
+<text x="320" y="868" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">Direct booking</text>
+<text x="220" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">book</text>
+<text x="420" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">confirmed</text>
+<text x="320" y="992" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">no holds, no status lookup</text>
+<text x="800" y="800" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#8A948E" text-anchor="middle" dominant-baseline="middle">RAIL OPERATOR</text>
+<text x="800" y="832" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">rail-osdm</text>
+<text x="800" y="868" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">Hold, then confirm</text>
+<text x="700" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">hold</text>
+<text x="900" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">confirm</text>
+<text x="800" y="992" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">a deadline on the hold</text>
+<text x="1280" y="800" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#8A948E" text-anchor="middle" dominant-baseline="middle">SHARED MOBILITY</text>
+<text x="1280" y="832" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#1B1F1D" text-anchor="middle" dominant-baseline="middle">mobility-async</text>
+<text x="1280" y="868" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">Asynchronous confirmation</text>
+<text x="1180" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">accepted</text>
+<text x="1380" y="926" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#1F8A5B" text-anchor="middle" dominant-baseline="middle">webhook</text>
+<text x="1280" y="992" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">the outcome arrives later</text>
+<text x="800" y="1110" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#8A948E" text-anchor="middle" dominant-baseline="middle">Fictional providers built on public standards. No supplier data.</text>
+<text x="800" y="1146" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#5B6660" text-anchor="middle" dominant-baseline="middle">mobility-provider-orchestrator  ·  Open-source reference implementation</text>
+</svg>

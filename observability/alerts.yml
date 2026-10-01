@@ -1,0 +1,44 @@
+# The alerts the design commits to (architecture, "Observability"). Thresholds are the
+# development defaults; a deployment tunes them to its envelope.
+groups:
+  - name: mobility-provider-orchestrator
+    rules:
+      - alert: RemediableReviewCaseOpen
+        expr: sum(review_cases_open{remediable="true"}) > 0
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "A review case an operator can act on has been open for more than 5 minutes"
+
+      - alert: UnresolvedBookingTooOld
+        expr: max(booking_unresolved_oldest_age_seconds) > 900
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: "The oldest unresolved booking is older than 15 minutes"
+
+      - alert: ConfirmBreakerOpen
+        expr: max by (provider) (provider_circuit_state{purpose="confirm"}) >= 2
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: "The confirmation circuit of {{ $labels.provider }} has been open for 2 minutes: holds may expire"
+
+      - alert: ConfirmDispatchLatencyOverEnvelope
+        expr: histogram_quantile(0.99, sum by (le, provider) (rate(confirm_dispatch_latency_seconds_bucket[5m]))) > 5
+        for: 5m
+        labels:
+          severity: ticket
+        annotations:
+          summary: "Hold-to-dispatch p99 for {{ $labels.provider }} exceeds the 5 s envelope"
+
+      - alert: QuotaServiceUnavailable
+        expr: sum(rate(provider_not_dispatched_total{reason="quota-outage"}[2m])) > 0
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: "Attempts are refused because the quota service is unreachable (fail closed)"

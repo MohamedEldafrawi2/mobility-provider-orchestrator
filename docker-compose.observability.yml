@@ -1,0 +1,70 @@
+# Observability override: traces to Jaeger through the OpenTelemetry Collector, metrics scraped
+# by Prometheus from the two internal listeners, a provisioned Grafana dashboard, and the alert
+# rules the design commits to. Everything is published on the loopback interface only.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.observability.yml up --build -d
+#   open http://127.0.0.1:3000 (Grafana, admin/admin) and http://127.0.0.1:16686 (Jaeger)
+
+services:
+  api:
+    environment:
+      MPO_OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      MPO_OTEL_SERVICE_NAME: mpo-api
+    depends_on:
+      otel-collector:
+        condition: service_started
+
+  worker:
+    environment:
+      MPO_OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      MPO_OTEL_SERVICE_NAME: mpo-worker
+    depends_on:
+      otel-collector:
+        condition: service_started
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.138.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    expose:
+      - "4317"
+      - "4318"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/jaeger:2.11.0
+    ports:
+      - "127.0.0.1:16686:16686"
+    expose:
+      - "4317"
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=2d
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:12.2.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/orchestrator.json
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus

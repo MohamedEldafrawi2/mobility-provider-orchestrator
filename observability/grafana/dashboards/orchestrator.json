@@ -1,0 +1,299 @@
+{
+  "uid": "mpo-orchestrator",
+  "title": "Mobility provider orchestrator",
+  "tags": ["mobility-provider-orchestrator"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "templating": {
+    "list": [
+      {
+        "name": "provider",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "query": "label_values(provider_attempts_total, provider)",
+        "includeAll": true,
+        "multi": true,
+        "current": {"text": "All", "value": "$__all"},
+        "refresh": 2
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Bookings",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Bookings by state",
+      "description": "Worker-owned gauge. Pending, unknown and review backlog at a glance.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 1},
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum by (state) (bookings_in_state{provider=~\"$provider\"})",
+          "legendFormat": "{{state}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short", "custom": {"fillOpacity": 10}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Commands settled per minute, by disposition",
+      "description": "Every settlement carries a basis; only FENCED_LOOKUP justifies a negative one after a possible effect.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 1},
+      "id": 3,
+      "targets": [
+        {
+          "expr": "sum by (kind, disposition, basis) (rate(booking_commands_total{provider=~\"$provider\"}[1m])) * 60",
+          "legendFormat": "{{kind}} {{disposition}} ({{basis}})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "stat",
+      "title": "Open review cases",
+      "description": "Remediable cases need an operator; non-remediable ones are honest permanent uncertainty.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 9},
+      "id": 4,
+      "targets": [
+        {"expr": "sum by (remediable) (review_cases_open)", "legendFormat": "remediable={{remediable}}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 1}]}
+        },
+        "overrides": []
+      },
+      "options": {"colorMode": "background", "graphMode": "none", "reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "Oldest unresolved booking",
+      "description": "Worst-case staleness of anything not yet terminal and not in review.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 9},
+      "id": 5,
+      "targets": [{"expr": "max(booking_unresolved_oldest_age_seconds)", "legendFormat": "age", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 300}, {"color": "red", "value": 900}]}
+        },
+        "overrides": []
+      },
+      "options": {"colorMode": "background", "graphMode": "area", "reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Webhook events per minute, by outcome",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 9},
+      "id": 6,
+      "targets": [
+        {"expr": "sum by (outcome) (rate(webhook_events_total[1m])) * 60", "legendFormat": "{{outcome}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "row",
+      "title": "Providers and admission",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 15},
+      "id": 10,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Provider attempts per minute, by outcome and side effect",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 11,
+      "targets": [
+        {
+          "expr": "sum by (provider, purpose, outcome, side_effect) (rate(provider_attempts_total{provider=~\"$provider\"}[1m])) * 60",
+          "legendFormat": "{{provider}} {{purpose}} {{outcome}} / {{side_effect}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Provider latency p99 per attempt",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 12,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, provider, purpose) (rate(provider_attempt_duration_seconds_bucket{provider=~\"$provider\"}[2m])))",
+          "legendFormat": "{{provider}} {{purpose}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "state-timeline",
+      "title": "Circuit breaker state per provider and purpose",
+      "description": "0 closed, 1 half open, 2 open. Each purpose has its own breaker: search tripping never touches confirmation.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "id": 13,
+      "targets": [
+        {
+          "expr": "max by (provider, purpose) (provider_circuit_state{provider=~\"$provider\"})",
+          "legendFormat": "{{provider}} {{purpose}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"type": "value", "options": {"0": {"text": "closed", "color": "green"}, "1": {"text": "half open", "color": "orange"}, "2": {"text": "open", "color": "red"}}}
+          ]
+        },
+        "overrides": []
+      },
+      "options": {"showValue": "never", "mergeValues": true}
+    },
+    {
+      "type": "timeseries",
+      "title": "Attempts refused locally per minute, by reason",
+      "description": "Nothing left the platform: bulkhead full, breaker open, quota exhausted or unreachable, retry tokens spent, deadline passed.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "id": 14,
+      "targets": [
+        {
+          "expr": "sum by (provider, purpose, reason) (rate(provider_not_dispatched_total{provider=~\"$provider\"}[1m])) * 60",
+          "legendFormat": "{{provider}} {{purpose}} {{reason}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Quota tokens left per purpose",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "id": 15,
+      "targets": [
+        {
+          "expr": "min by (provider, purpose) (provider_quota_tokens{provider=~\"$provider\"})",
+          "legendFormat": "{{provider}} {{purpose}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Hold to confirmation dispatch, p50 and p99",
+      "description": "The load envelope: 200 concurrent holds per provider dispatched within 5 s at p99 while search runs at its cap.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "id": 16,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, provider) (rate(confirm_dispatch_latency_seconds_bucket{provider=~\"$provider\"}[5m])))",
+          "legendFormat": "{{provider}} p99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, provider) (rate(confirm_dispatch_latency_seconds_bucket{provider=~\"$provider\"}[5m])))",
+          "legendFormat": "{{provider}} p50",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 5}]},
+          "custom": {"thresholdsStyle": {"mode": "line"}}
+        },
+        "overrides": []
+      },
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "row",
+      "title": "Search",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 40},
+      "id": 20,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Searches per minute, by outcome",
+      "description": "Partial results are the design: a provider that fails degrades the answer, it never blocks it.",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 41},
+      "id": 21,
+      "targets": [
+        {"expr": "sum by (outcome) (rate(search_requests_total[1m])) * 60", "legendFormat": "{{outcome}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Search branches per minute, by provider and status",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 41},
+      "id": 22,
+      "targets": [
+        {
+          "expr": "sum by (provider, status) (rate(search_provider_outcomes_total{provider=~\"$provider\"}[1m])) * 60",
+          "legendFormat": "{{provider}} {{status}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "right"}, "tooltip": {"mode": "multi"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Search wall time p50 and p99",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 41},
+      "id": 23,
+      "targets": [
+        {"expr": "histogram_quantile(0.99, sum by (le) (rate(search_duration_seconds_bucket[2m])))", "legendFormat": "p99", "refId": "A"},
+        {"expr": "histogram_quantile(0.50, sum by (le) (rate(search_duration_seconds_bucket[2m])))", "legendFormat": "p50", "refId": "B"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 3}]},
+          "custom": {"thresholdsStyle": {"mode": "line"}}
+        },
+        "overrides": []
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+    }
+  ]
+}

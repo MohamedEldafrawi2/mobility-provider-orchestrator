@@ -1,0 +1,158 @@
+[project]
+name = "mobility-provider-orchestrator"
+version = "0.1.0"
+description = "One unified booking API over many transport providers: provider integration, resilience, and honest uncertainty."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141",
+    "uvicorn[standard]>=0.53",
+    "pydantic>=2.13",
+    "pydantic-settings>=2.15",
+    "sqlalchemy[asyncio]>=2.0.54,<2.1",
+    "asyncpg>=0.31",
+    "alembic>=1.20",
+    "redis>=8.1",
+    "httpx>=0.28",
+    "structlog>=26.1",
+    "tzdata>=2025.2",
+    "email-validator>=2.2",
+    "opentelemetry-api>=1.30",
+    "opentelemetry-sdk>=1.30",
+    "opentelemetry-exporter-prometheus>=0.51b0",
+    "standardwebhooks>=1.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.30",
+    "opentelemetry-instrumentation-fastapi>=0.51b0",
+    "opentelemetry-instrumentation-httpx>=0.51b0",
+    "opentelemetry-instrumentation-sqlalchemy>=0.51b0",
+]
+
+[project.scripts]
+mpo-api = "orchestrator.main:run"
+mpo-sim-bus = "provider_sims.bus_legacy.main:run"
+mpo-sim-rail = "provider_sims.rail_osdm.main:run"
+mpo-sim-async = "provider_sims.mobility_async.main:run"
+mpo-worker = "orchestrator.worker.main:run"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "pytest-asyncio>=1.4",
+    "asgi-lifespan>=2.1",
+    "testcontainers[postgres,redis]>=4.15",
+    "ruff>=0.16",
+    "mypy>=2.3",
+    "import-linter>=2.5",
+    "hypothesis>=6.168",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/orchestrator", "src/provider_sims"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "ASYNC", "S", "N"]
+ignore = ["S101", "RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S108", "S311"]
+# fixtures imported from the sibling module are redefined by the test signatures, by design
+"tests/integration/test_resilience_b.py" = ["F811"]
+"tests/integration/test_booking_a.py" = ["F811"]
+"tests/integration/test_booking_c.py" = ["F811", "F401"]
+"tests/integration/test_search.py" = ["F811", "F401"]
+"tests/integration/test_races.py" = ["F811", "F401"]
+"tests/integration/test_chaos_convergence.py" = ["F811", "F401"]
+"migrations/**" = ["N999"]
+"src/orchestrator/api/problems.py" = ["N818"]  # RFC 9457 calls it a Problem
+"src/provider_sims/**" = ["N815", "N803"]  # legacy provider APIs spell fields their way
+"src/orchestrator/providers/*/adapter.py" = ["N815"]  # provider DTOs mirror the wire format
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+mypy_path = "src"
+packages = ["orchestrator", "provider_sims", "benchmarks"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = [
+    "standardwebhooks",
+    "standardwebhooks.*",
+    "opentelemetry.instrumentation.*",
+    "opentelemetry.exporter.otlp.*",
+    "opentelemetry.sdk.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["testcontainers.*", "asgi_lifespan.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "integration: needs Docker (testcontainers)",
+    "slow: takes seconds (the scaled load envelope)",
+]
+
+[tool.importlinter]
+root_packages = ["orchestrator", "provider_sims"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layering: domain is pure; the worker hosts an api listener; both sit on application"
+type = "layers"
+layers = [
+    "orchestrator.worker",
+    "orchestrator.api",
+    "orchestrator.application",
+    "orchestrator.resilience",
+    "orchestrator.providers | orchestrator.persistence",
+    "orchestrator.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "domain imports nothing from infrastructure"
+type = "forbidden"
+source_modules = ["orchestrator.domain"]
+forbidden_modules = [
+    "orchestrator.api",
+    "orchestrator.application",
+    "orchestrator.persistence",
+    "orchestrator.providers",
+    "orchestrator.resilience",
+    "orchestrator.worker",
+    "orchestrator.telemetry",
+    "orchestrator.config",
+    "fastapi",
+    "sqlalchemy",
+    "redis",
+    "httpx",
+    "secrets",
+    "random",
+    "os",
+    "uuid",
+]
+
+[[tool.importlinter.contracts]]
+name = "simulators share nothing with the platform"
+type = "forbidden"
+source_modules = ["provider_sims"]
+forbidden_modules = ["orchestrator"]

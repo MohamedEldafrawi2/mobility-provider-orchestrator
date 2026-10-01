@@ -1,0 +1,26 @@
+# Development override: publishes PostgreSQL, Redis, the admin listener and the simulators on
+# the loopback interface so the demo script, local tools and manual experiments can reach them.
+# Never use in a shared environment.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:15432:5432"
+  redis:
+    ports:
+      - "127.0.0.1:16379:6379"
+  api:
+    ports:
+      - "8000:8000"
+      - "127.0.0.1:8001:8001"
+  bus-legacy:
+    ports:
+      - "127.0.0.1:9002:9002"
+  rail-osdm:
+    ports:
+      - "127.0.0.1:9001:9001"
+  mobility-async:
+    ports:
+      - "127.0.0.1:9003:9003"

@@ -1,0 +1,133 @@
+name: mpo
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: mpo
+      POSTGRES_PASSWORD: mpo
+      POSTGRES_DB: mpo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mpo -d mpo"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+  redis:
+    image: redis:8
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    env_file: .env.example
+    environment:
+      MPO_DATABASE_URL: postgresql+asyncpg://mpo:mpo@postgres:5432/mpo
+      MPO_REDIS_URL: redis://redis:6379/0
+      MPO_BUS_LEGACY_URL: http://bus-legacy:9002
+      MPO_RAIL_OSDM_URL: http://rail-osdm:9001
+      MPO_MOBILITY_ASYNC_URL: http://mobility-async:9003
+    ports:
+      # Only the public listener is published. The admin listener on 8001 stays inside the network.
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    build: .
+    command: ["mpo-worker"]
+    env_file: .env.example
+    environment:
+      MPO_DATABASE_URL: postgresql+asyncpg://mpo:mpo@postgres:5432/mpo
+      MPO_REDIS_URL: redis://redis:6379/0
+      MPO_BUS_LEGACY_URL: http://bus-legacy:9002
+      MPO_RAIL_OSDM_URL: http://rail-osdm:9001
+      MPO_MOBILITY_ASYNC_URL: http://mobility-async:9003
+    expose:
+      - "8002"  # internal: the worker's own /metrics (operator key) and /healthz
+    depends_on:
+      api:
+        condition: service_healthy
+      bus-legacy:
+        condition: service_healthy
+      rail-osdm:
+        condition: service_healthy
+      mobility-async:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8002/healthz')\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  rail-osdm:
+    build: .
+    command: ["mpo-sim-rail"]
+    environment:
+      SIM_PORT: "9001"
+      SIM_ADMIN_TOKEN: dev-sim-token
+      RAIL_DB_PATH: /data/rail-osdm.sqlite3
+    expose:
+      - "9001"
+    volumes:
+      - raildata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:9001/healthz')\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mobility-async:
+    build: .
+    command: ["mpo-sim-async"]
+    environment:
+      SIM_PORT: "9003"
+      SIM_ADMIN_TOKEN: dev-sim-token
+      ASYNC_DB_PATH: /data/mobility-async.sqlite3
+      WEBHOOK_URL: http://api:8000/v1/providers/mobility-async/webhooks
+      WEBHOOK_SECRET: whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw
+    expose:
+      - "9003"
+    volumes:
+      - asyncdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:9003/healthz')\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  bus-legacy:
+    build: .
+    command: ["mpo-sim-bus"]
+    environment:
+      SIM_PORT: "9002"
+      SIM_ADMIN_TOKEN: dev-sim-token
+      BUS_DB_PATH: /data/bus-legacy.sqlite3
+    expose:
+      - "9002"
+    volumes:
+      - busdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:9002/healthz')\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  busdata:
+  raildata:
+  asyncdata:
